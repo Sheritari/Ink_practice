@@ -16,7 +16,7 @@ class CharacteristicType(models.Model):
     json_value_name = models.CharField(max_length=250, verbose_name='Название значения в поле json')
 
     def __str__(self):
-        return f"{self.name} {self.max_value_x} {self.max_value_y} {self.json_key_name} {self.json_value_name}"
+        return f"{self.name} {self.max_value_x} {self.max_value_y}"
     
 class Characteristic(models.Model):
     """Характеристика"""
@@ -31,7 +31,7 @@ class Characteristic(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
 
     def __str__(self):
-        return f"{self.value} {self.characteristic_type} {self.name}"
+        return f"{self.characteristic_type} {self.name}"
     
 class Well(models.Model):
     """Скважина"""
