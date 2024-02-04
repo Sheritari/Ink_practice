@@ -54,8 +54,8 @@ class WellCharacteristicBinding(models.Model):
         verbose_name = 'Характеристики скважин'
         verbose_name_plural = 'Характеристики скважин'
 
-    well = models.ForeignKey(Well, on_delete=models.CASCADE)  # Используем абстрактную модель Well
-    characteristic = models.ForeignKey(Characteristic, on_delete=models.CASCADE)
+    well = models.ForeignKey(Well, on_delete=models.CASCADE, verbose_name='Скважина')  # Используем абстрактную модель Well
+    characteristic = models.ForeignKey(Characteristic, on_delete=models.CASCADE, verbose_name='Характеристика')
 
     def __str__(self):
         return f"{self.well} - {self.characteristic}"
