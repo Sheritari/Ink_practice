@@ -6,25 +6,34 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt, datetime
 from .models import CharacteristicType, Characteristic, Well, WellCharacteristicBinding, User
 from .serializers import CharacteristicTypeSerializer, CharacteristicSerializer, WellSerializer, WellCharacteristicSerializer, UserSerializer
+from .permissions import IsAdminOrReadOnly
 
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     queryset = CharacteristicType.objects.all()
     serializer_class = CharacteristicTypeSerializer
+    
+    permission_classes = [IsAdminOrReadOnly]
 
 class CharacteristicViewSet(viewsets.ModelViewSet):
     queryset = Characteristic.objects.all()
     serializer_class = CharacteristicSerializer
 
+    permission_classes = [IsAdminOrReadOnly]
+
 class WellViewSet(viewsets.ModelViewSet):
     queryset = Well.objects.all()
     serializer_class = WellSerializer
 
+    permission_classes = [IsAdminOrReadOnly]  
+
 class WellCharacteristicViewSet(viewsets.ModelViewSet):
     queryset = WellCharacteristicBinding.objects.all()
-    serializer_class = WellCharacteristicSerializer
+    serializer_class = WellCharacteristicSerializer   
+
+    permission_classes = [IsAdminOrReadOnly]
 
 class RegisterView(APIView):
-    
+
     @classmethod
     def register(cls, request):
         serializer = UserSerializer(data=request.data)
