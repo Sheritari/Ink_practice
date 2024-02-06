@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CharacteristicType, Characteristic, WellCharacteristicBinding, Well
+from .models import CharacteristicType, Characteristic, WellCharacteristicBinding, Well, User
 
 # Регистрация модели "Справочник типов характеристик" в админке
 @admin.register(CharacteristicType)
@@ -20,3 +20,8 @@ class WellCharacteristicBindingAdmin(admin.ModelAdmin):
 @admin.register(Well)
 class WellAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+# Регистрация модели "Пользователь" в админке
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['name', 'username', 'email']
