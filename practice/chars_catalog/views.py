@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
+from drf_spectacular.utils import extend_schema
 import jwt, datetime
 from .models import CharacteristicType, Characteristic, Well, WellCharacteristicBinding, User
 from .serializers import CharacteristicTypeSerializer, CharacteristicSerializer, WellSerializer, WellCharacteristicSerializer, UserSerializer
@@ -35,12 +36,14 @@ class WellCharacteristicViewSet(viewsets.ModelViewSet):
 class RegisterView(APIView):
 
     @classmethod
+    @extend_schema(responses=UserSerializer)
     def register(cls, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
     
+    @extend_schema(responses=UserSerializer)
     def post(self, request):
         token = request.COOKIES.get('jwt')
 
@@ -55,6 +58,8 @@ class RegisterView(APIView):
         raise AuthenticationFailed('Already authenticated, logout!')
     
 class LoginView(APIView):
+
+    @extend_schema(responses=UserSerializer)
     def post(self, request):
         try:
             username = request.data['username']
@@ -98,6 +103,7 @@ class LoginView(APIView):
     
 class UserView(APIView):
 
+    @extend_schema(responses=UserSerializer)
     def get(self, request):
         token = request.COOKIES.get('jwt')
 
@@ -116,6 +122,8 @@ class UserView(APIView):
         return Response(serializer.data)
     
 class LogoutView(APIView):
+    
+    @extend_schema(responses=UserSerializer)
     def post(self, request):
         response = Response()
         response.delete_cookie('jwt')

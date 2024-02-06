@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'chars_catalog.apps.CharsCatalogConfig',
     'corsheaders',
     'rest_framework',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,12 @@ AUTH_USER_MODEL = 'chars_catalog.User'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'charsAPI',
+    'DESCRIPTION': 'API для управления характеристиками, типами характеристик и их привязкой к скважинам. Реализованы модели для хранения и работы с данными характеристик и справочником типов характеристик. Также предоставляется возможность привязки характеристик к сущностям скважин. С помощью данного API вы можете управлять различными характеристиками и их связями с другими сущностями в вашем проекте.'
+}
