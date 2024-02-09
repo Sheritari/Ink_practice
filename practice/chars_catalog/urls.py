@@ -1,5 +1,6 @@
 from django.urls import path, include
-from .views import RegisterView, LoginView, UserView, LogoutView, CharacteristicTypeViewSet, CharacteristicViewSet, WellViewSet, WellCharacteristicViewSet
+from .views import CharacteristicTypeViewSet, CharacteristicViewSet, WellViewSet, WellCharacteristicViewSet
+from .administration import RegisterView, LoginView, UserView, LogoutView
 from rest_framework import routers
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 
