@@ -60,7 +60,7 @@ class WellCharacteristicBinding(models.Model):
 
     def __str__(self):
         return f"{self.well} - {self.characteristic}"
-
+    
 class User(AbstractUser):
     """Пользователь"""
 
@@ -76,5 +76,3 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
-
-
