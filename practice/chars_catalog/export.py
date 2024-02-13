@@ -12,7 +12,7 @@ def export_characteristics_to_excel(request):
     worksheet.title = 'Characteristics'
 
     # Названия полей модели
-    fields = ['name', 'characteristic_type', 'value']
+    fields = ['id', 'name', 'characteristic_type', 'value']
 
     # Названия колонок в Excel
     worksheet.append([Characteristic._meta.get_field(field).verbose_name for field in fields])
@@ -21,6 +21,7 @@ def export_characteristics_to_excel(request):
     for characteristic in Characteristic.objects.all():
         value_str = json.dumps(characteristic.value)  # Преобразование JSON-объекта в строку
         row_data = [
+            characteristic.id,
             getattr(characteristic, 'name'),
             characteristic.characteristic_type.name,
             value_str
