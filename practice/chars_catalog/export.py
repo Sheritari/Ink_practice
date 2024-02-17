@@ -15,7 +15,13 @@ def export_characteristics_to_excel(request):
     fields = ['id', 'name', 'characteristic_type', 'value']
 
     # Названия колонок в Excel
-    worksheet.append([Characteristic._meta.get_field(field).verbose_name for field in fields])
+    column_names = [
+        'id',
+        Characteristic._meta.get_field('name').verbose_name,
+        Characteristic._meta.get_field('characteristic_type').verbose_name,
+        Characteristic._meta.get_field('value').verbose_name,
+    ]
+    worksheet.append(column_names)
 
     # Запись данных модели в Excel
     for characteristic in Characteristic.objects.all():

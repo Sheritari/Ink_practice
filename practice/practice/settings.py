@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'drf_spectacular',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +146,5 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'charsAPI',
     'DESCRIPTION': 'API для управления характеристиками, типами характеристик и их привязкой к скважинам. Реализованы модели для хранения и работы с данными характеристик и справочником типов характеристик. Также предоставляется возможность привязки характеристик к сущностям скважин. С помощью данного API вы можете управлять различными характеристиками и их связями с другими сущностями в вашем проекте.'
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
