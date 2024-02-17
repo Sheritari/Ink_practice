@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from .models import CharacteristicType, Characteristic, Well, WellCharacteristicBinding
 from .serializers import CharacteristicTypeSerializer, CharacteristicSerializer, WellSerializer, WellCharacteristicSerializer
 from .permissions import IsAdminOrReadOnly
+from .tasks import test_func
+from django.http import HttpResponse
 
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     queryset = CharacteristicType.objects.all()
@@ -27,3 +29,7 @@ class WellCharacteristicViewSet(viewsets.ModelViewSet):
     serializer_class = WellCharacteristicSerializer   
 
     permission_classes = [IsAdminOrReadOnly]
+
+def test(request):
+    test_func.delay()
+    return HttpResponse("Done")

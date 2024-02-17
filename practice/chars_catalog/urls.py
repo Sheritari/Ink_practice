@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import CharacteristicTypeViewSet, CharacteristicViewSet, WellViewSet, WellCharacteristicViewSet
+from .views import CharacteristicTypeViewSet, CharacteristicViewSet, WellViewSet, WellCharacteristicViewSet, test
 from .administration import RegisterView, LoginView, UserView, LogoutView
 from rest_framework import routers
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
@@ -21,4 +21,5 @@ urlpatterns = [
     path('schema/docs', SpectacularSwaggerView.as_view(url_name='schema')), 
     path('export_char_xlsx/', export_characteristics_to_excel, name='export_char'),
     path('', include(router.urls)),
+    path('test', test, name='test')
 ]

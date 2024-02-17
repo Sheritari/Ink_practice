@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'import_export',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,12 @@ SPECTACULAR_SETTINGS = {
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_EXCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Irkutsk'
+CELERY_RESULT_BACKEND = 'django-db'
