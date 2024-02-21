@@ -6,8 +6,7 @@ from .permissions import IsAdminOrReadOnly
 from .tasks import export_task
 from os import remove
 from django.http import HttpResponse
-from celery.result import AsyncResult
-from time import sleep
+from rest_framework.decorators import permission_classes, api_view
 
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     queryset = CharacteristicType.objects.all()
@@ -33,6 +32,8 @@ class WellCharacteristicViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAdminOrReadOnly]
 
+@api_view(['GET'])
+@permission_classes([IsAdminOrReadOnly])
 def async_export_char(request):
     task = export_task.delay()
     task_result = task.get()
