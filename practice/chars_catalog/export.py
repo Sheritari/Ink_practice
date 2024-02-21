@@ -1,18 +1,19 @@
-import openpyxl
+from openpyxl import Workbook
 from django.http import HttpResponse
-import json
+from json import dumps
 from .models import Characteristic
+from os.path import join
+from django.conf import settings
 
-def export_characteristics_to_excel(request):
+def export_characteristics_to_excel():
+    file_path = join(settings.MEDIA_ROOT, 'characteristics.xlsx')  # Путь сохранения файла на сервере
+
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="characteristics.xlsx"'
 
-    workbook = openpyxl.Workbook()
+    workbook = Workbook()
     worksheet = workbook.active
     worksheet.title = 'Characteristics'
-
-    # Названия полей модели
-    fields = ['id', 'name', 'characteristic_type', 'value']
 
     # Названия колонок в Excel
     column_names = [
@@ -25,7 +26,7 @@ def export_characteristics_to_excel(request):
 
     # Запись данных модели в Excel
     for characteristic in Characteristic.objects.all():
-        value_str = json.dumps(characteristic.value)  # Преобразование JSON-объекта в строку
+        value_str = dumps(characteristic.value)  # Преобразование JSON-объекта в строку
         row_data = [
             characteristic.id,
             getattr(characteristic, 'name'),
@@ -35,5 +36,5 @@ def export_characteristics_to_excel(request):
         worksheet.append(row_data)
 
     # Сохранение данных в HttpResponse
-    workbook.save(response)
-    return response
+    workbook.save(file_path)
+    return file_path

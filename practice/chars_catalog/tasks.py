@@ -1,7 +1,9 @@
 from celery import shared_task
+from .export import export_characteristics_to_excel
 
 @shared_task(bind=True)
-def test_func(self):
-    for i in range(10):
-        print(i)
-    return "Done"
+def export_task(self):
+    self.update_state(state='PENDING')
+    data = export_characteristics_to_excel()
+    self.update_state(state='COMPLETE')
+    return {'result': data}

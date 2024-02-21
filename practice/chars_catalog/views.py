@@ -3,8 +3,11 @@ from rest_framework import viewsets
 from .models import CharacteristicType, Characteristic, Well, WellCharacteristicBinding
 from .serializers import CharacteristicTypeSerializer, CharacteristicSerializer, WellSerializer, WellCharacteristicSerializer
 from .permissions import IsAdminOrReadOnly
-from .tasks import test_func
+from .tasks import export_task
+from os import remove
 from django.http import HttpResponse
+from celery.result import AsyncResult
+from time import sleep
 
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     queryset = CharacteristicType.objects.all()
@@ -30,6 +33,30 @@ class WellCharacteristicViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAdminOrReadOnly]
 
-def test(request):
-    test_func.delay()
-    return HttpResponse("Done")
+def async_export_char(request):
+    task = export_task.delay()
+    task_result = task.get()
+
+    file_path = None
+    # Ждем, пока задача завершится и вернет путь к файлу
+    if task_result:
+        file_path = task_result
+
+    if file_path:
+        def file_iterator(file_path, chunk_size=8192):
+            with open(file_path, 'rb') as file:
+                while True:
+                    chunk = file.read(chunk_size)
+                    if not chunk:
+                        break
+                    yield chunk
+
+        response = HttpResponse(file_iterator(file_path))
+        response['Content-Disposition'] = f'attachment; filename="characteristics.xlsx'
+
+        # Удаление файла с сервера после скачивания
+        remove(file_path)
+
+        return response
+    else:
+        return HttpResponse('File export in progress. Please try again later.')
