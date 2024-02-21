@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import CharacteristicType, Characteristic, Well, WellCharacteristicBinding
 from .serializers import CharacteristicTypeSerializer, CharacteristicSerializer, WellSerializer, WellCharacteristicSerializer
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, TypeCharacteristicPermission
 from .tasks import export_task
 from os import remove
 from django.http import HttpResponse
@@ -11,8 +11,7 @@ from rest_framework.decorators import permission_classes, api_view
 class CharacteristicTypeViewSet(viewsets.ModelViewSet):
     queryset = CharacteristicType.objects.all()
     serializer_class = CharacteristicTypeSerializer
-    
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [TypeCharacteristicPermission]
 
 class CharacteristicViewSet(viewsets.ModelViewSet):
     queryset = Characteristic.objects.all()
