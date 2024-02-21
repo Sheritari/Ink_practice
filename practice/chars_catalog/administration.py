@@ -1,10 +1,13 @@
 from .models import User
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 import jwt, datetime
 from drf_spectacular.utils import extend_schema
+from rest_framework.exceptions import ValidationError
+from django.contrib.auth.models import Group
+from django.http import Http404
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +22,15 @@ class UserSerializer(serializers.ModelSerializer):
         instance = self.Meta.model(**validated_data)
         if password is not None:
             instance.set_password(password)
+        instance.save()
+        return instance
+    
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'password':
+                instance.set_password(value)
+            else:
+                setattr(instance, attr, value)
         instance.save()
         return instance
 
@@ -93,22 +105,68 @@ class LoginView(APIView):
 class UserView(APIView):
 
     @extend_schema(responses=UserSerializer)
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
+    def get(self, request, pk=None):
+        if pk is not None:
+            # Получение информации о конкретном пользователе
+            user = User.objects.filter(id=pk).first()
+            if not user:
+                raise Http404("User does not exist")
 
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
-        
-        try:
-            payload = jwt.decode(token, 'kaboom', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-        
-        user = User.objects.filter(id=payload['id']).first()
+            serializer = UserSerializer(user)
+        else:
+            # Получение списка всех пользователей
+            users = User.objects.all()
+            serializer = UserSerializer(users, many=True)
 
-        serializer = UserSerializer(user)
-        
         return Response(serializer.data)
+    
+    @extend_schema(request=UserSerializer, responses=UserSerializer)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Добавление пользователя в группу
+        group_name = request.data.get('group')
+        if group_name:
+            group = Group.objects.filter(name=group_name).first()
+            if group:
+                group.user_set.add(user)
+            else:
+                raise ValidationError("Group does not exist")
+
+        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+    
+    @extend_schema(request=UserSerializer, responses=UserSerializer)
+    def put(self, request, pk):
+        user = User.objects.filter(id=pk).first()
+        if not user:
+            raise Http404("User does not exist")
+        
+        # Обновление пользовательских данных
+        serializer = UserSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_user = serializer.save()
+        
+        # Изменение группы пользователя
+        group_name = request.data.get('group')
+        if group_name:
+            group = Group.objects.filter(name=group_name).first()
+            if group:
+                # Удаляем пользователя из имеющихся групп
+                user.groups.clear()
+                group.user_set.add(user)
+            else:
+                raise ValidationError("Group does not exist")
+        
+        return Response(UserSerializer(updated_user).data)
+    
+    def delete(self, request, pk):
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            raise Http404("User does not exist")
+        user.delete()
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
     
 class LogoutView(APIView):
     
