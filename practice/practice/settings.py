@@ -89,6 +89,9 @@ DATABASES = {
         'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '5432',
+        'TEST': {
+            'NAME': 'charsdb_test',
+        },
     }
 }
 
