@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+*.xlsx*
 staticfiles/
 schema.yml
 .Python

@@ -161,3 +161,9 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Irkutsk'
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BEAT_SCHEDULE = {
+    'export-data-every-day': {
+        'task': 'chars_catalog.tasks.export_data_to_excel_task',
+        'schedule': 86400,  # 86400 секунд = 1 день
+    },
+}
